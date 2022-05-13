@@ -59,7 +59,7 @@ $("#task-form-modal").on("shown.bs.modal", function() {
 });
 
 // save button in modal was clicked
-$("#task-form-modal .btn-primary").click(function() {
+$("#task-form-modal .btn-save").click(function() {
   // get form values
   var taskText = $("#modalTaskDescription").val();
   var taskDate = $("#modalDueDate").val();
@@ -182,23 +182,25 @@ $("#remove-tasks").on("click", function() {
   saveTasks();
 });
 
-//makes things moveable
+// enable draggable/sortable feature on list-group elements
 $(".card .list-group").sortable({
   connectWith: $(".card .list-group"),
   scroll: false,
   tolerance: "pointer",
   helper: "clone",
-  activate: function(event) {  //to do list
-    console.log("activate", this); 
+  activate: function(event, ui) {  //to do list
+    $(this).addClass("dropover");  //$(this) -selected the jquiry .addclass - selecting the css
+    $(".bottom-trash").addClass("bottom-trash-drag"); //adding the trash in both index and style
   },
-  deactivate: function(event) {  //done list
-    console.log("deactivate", this);
+  deactivate: function(event, ui) {  //done list
+    $(this).removeClass("dropover"); //remove class shows the after effects
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
   over: function(event) {  //to do list
-    console.log("over", event.target);
+    $(event.target).addClass("dropover-active");
   },
   out: function(event) {   //moving out
-    console.log("out", event.target);
+    $(event.target).removeClass("dropover-active");
   },
   update: function(event) {  //to in progress
 
@@ -240,14 +242,14 @@ $("#trash").droppable({
   accept: ".card .list-group-item",
   tolerance: "touch",
   drop: function(event, ui) {
-    console.log("drop");
+    $(".bottom-trash").removeClass("bottom-trash-active");
     ui.draggable.remove(); //remove the dragged item
   },
   over: function(event, ui){
-    console.log("over");
+    $(".bottom-trash").addClass("bottom-trash-active");
   },
   out: function(event, ui){
-    console.log("out");
+    $(".bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
@@ -279,12 +281,6 @@ var auditTask = function(taskEl){
   }
 };
 
-//sets the automated timer but will run every moment that the timer has been set, loopes every 5 seconds to se if anything is due
-setInterval(function () {
-  $(".card .list-group-item").each(function(index, el) {
-    auditTask(el);
-  });
-}, (1000 * 60) * 30);
 
 // load tasks for the first time
 loadTasks();
@@ -293,3 +289,10 @@ loadTasks();
 // setTimeout(function(){
 //   alert("This message happens after 5 seconds!");
 // },5000);
+
+//sets the automated timer but will run every moment that the timer has been set, loopes every 5 seconds to se if anything is due
+setInterval(function () {
+  $(".card .list-group-item").each(function(index, el) {
+    auditTask(el);
+  });
+}, 1800000);

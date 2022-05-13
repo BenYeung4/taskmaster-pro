@@ -279,7 +279,17 @@ var auditTask = function(taskEl){
   }
 };
 
+//sets the automated timer but will run every moment that the timer has been set, loopes every 5 seconds to se if anything is due
+setInterval(function () {
+  $(".card .list-group-item").each(function(index, el) {
+    auditTask(el);
+  });
+}, (1000 * 60) * 30);
+
 // load tasks for the first time
 loadTasks();
 
-
+//sets the automated timer but will only run once
+// setTimeout(function(){
+//   alert("This message happens after 5 seconds!");
+// },5000);
